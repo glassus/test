@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><title>\o/ </title></head>
+  <body bgcolor="lightblue">
+<br /><br />
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-48189325-1', 'free.fr');
+  ga('send', 'pageview');
+
+</script>
+
+
+<div style="text-align:center;">
+<canvas id="demo" width="600" height="600">
+	<span class="ko">&lt;canvas&gt; non supportée ! utilisez une version récente de Firefox ou bien Internet Explorer 10</span>
+</canvas>
+</div>
+<script>
+	var ctx = document.getElementById("demo").getContext("2d");
+
+
+var tempstrajet = 1000 ; // temps de trajet des figures (en ms)
+var nbpas=15; // nombre de d'images simulant le mouvement
+//var tempspause = 2000 ; // temps de pause entre deux figure (en ms)
+
+var couleurfond = "rgba(255,255,204,1)"
+
+
+var a; // coefficients barycentriques 
+var b;
+
+var X = new Array(); // tableaux de coordonnées des points de base
+var Y = new Array();
+var Xd = new Array();
+var Yd = new Array();
+var Xt = new Array();
+var Yt = new Array();
+
+function f(x,y) {
+return a*x+b*y; // renvoie le barycentre entre les positions x et y
+}
+
+
+
+function randomize() { // affecte des nouveaux points de base aléatoires
+for (var i=0; i<NBfig; i++) {
+X[i]=0.8*ctx.canvas.width * Math.random();
+Y[i]=0.8*ctx.canvas.width * Math.random();
+			}
+}
+
+
+
+
+
+
+
+
+
+function pointsdepart() { // definition du point de base de chaque figure
+// cercles
+Xd[0]= 121;
+Yd[0]=366;
+
+Xd[1]= 241;
+Yd[1]=189;
+
+Xd[2]= 333;
+Yd[2]=441;
+
+Xd[3]= 392;
+Yd[3]=219;
+
+Xd[4]= 436;
+Yd[4]=49;
+
+Xd[5]= 450;
+Yd[5]=288;
+
+Xd[6]= 501;
+Yd[6]=143;
+
+// 3 rectangles
+
+Xd[7]= 245;
+Yd[7]=508;
+
+Xd[8]= 245;
+Yd[8]= 533;
+
+Xd[9]= 245;
+Yd[9]=520;
+
+//carre
+Xd[10]= 432;
+Yd[10]=457;
+
+// triangles
+Xd[11]= 135;
+Yd[11]=286;
+
+Xd[12]= 222;
+Yd[12]=115;
+
+Xd[13]= 277;
+Yd[13]=247;
+
+Xd[14]= 427;
+Yd[14]=129;
+
+Xd[15]= 513;
+Yd[15]=246;
+
+}
+
+var NBfig = 16;
+
+
+
+
+
+
+
+//------------------------- dessin du tableau initial ------------>
+
+//--------------paramètres des contours-->
+var omb=1;
+var cont=0.5;
+var coulcercles="rgba(255,255,255,0.5)";
+
+function dessine() {
+
+ctx.shadowBlur = omb;
+ctx.shadowColor = "black";
+
+
+//--cercle 1
+ctx.beginPath();
+ctx.fillStyle = coulcercles;
+ctx.arc(f(Xd[1],X[1]), f(Yd[1],Y[1]), 133, 0, Math.PI*2, true); 
+ctx.closePath();
+ctx.fill();
+ctx.stroke();
+
+
+// y----------------- rectangles 
+
+// rectangle 7
+ctx.beginPath();
+ctx.rect(f(Xd[7],X[7]), f(Yd[7],Y[7]),275 ,6 );
+ctx.fillStyle = "rgba(149,120,113,0.5)";
+ctx.closePath();
+ctx.fill();
+ctx.lineWidth = cont;
+ctx.strokeStyle = 'black';
+ctx.stroke();
+
+
+// rectangle 8
+ctx.beginPath();
+ctx.rect(f(Xd[8],X[8]), f(Yd[8],Y[8]),275 ,10 );
+ctx.fillStyle = "rgba(149,120,113,0.5)";
+ctx.fill();
+ctx.lineWidth = cont;
+ctx.strokeStyle = 'black';
+ctx.closePath();
+ctx.stroke();
+
+
+// rectangle 9
+ctx.fillStyle = "rgba(149,120,113,0.5)";
+ctx.beginPath();
+ctx.rect(f(Xd[9],X[9]), f(Yd[9],Y[9]),275 ,6 );
+ctx.lineWidth = cont;
+ctx.strokeStyle = 'black';
+ctx.fill();
+ctx.stroke();
+ctx.closePath();
+
+//----------------carré du bas 10
+
+ctx.beginPath()
+ctx.fillStyle = "rgba(255,133,70,1)";
+ctx.moveTo(f(Xd[10],X[10]), f(Yd[10],Y[10]));
+ctx.lineTo(f(Xd[10],X[10])+50, f(Yd[10],Y[10]));
+ctx.lineTo(f(Xd[10],X[10])+50, f(Yd[10],Y[10])+50);
+ctx.lineTo(f(Xd[10],X[10]), f(Yd[10],Y[10])+50);
+ctx.lineTo(f(Xd[10],X[10]), f(Yd[10],Y[10]));
+ctx.fill();
+ctx.closePath();
+ctx.stroke();
+
+//-----------------------triangles
+//------ triangle 11
+ctx.fillStyle = "rgba(102,0,204,0.4)";
+ctx.beginPath();
+ctx.moveTo(f(Xd[11],X[11]),f(Yd[11],Y[11]));
+ctx.lineTo(f(Xd[11],X[11])+188,f(Yd[11],Y[11])+220);
+ctx.lineTo(f(Xd[11],X[11])+72,f(Yd[11],Y[11])-45);
+ctx.lineTo(f(Xd[11],X[11]),f(Yd[11],Y[11]));
+ctx.fill();
+ctx.closePath();
+ctx.stroke();
+
+//------ triangle 12
+ctx.fillStyle = "rgba(254,51,100,0.6)";
+ctx.beginPath();
+ctx.moveTo(f(Xd[12],X[12]),f(Yd[12],Y[12]));
+ctx.lineTo(f(Xd[12],X[12])+102,f(Yd[12],Y[12])+394);
+ctx.lineTo(f(Xd[12],X[12])+164,f(Yd[12],Y[12])-15);
+ctx.lineTo(f(Xd[12],X[12]),f(Yd[12],Y[12]));
+ctx.fill();
+ctx.closePath();
+ctx.stroke();
+
+//------ triangle 13
+ctx.fillStyle = "rgba(255,0,0,0.5)";
+ctx.beginPath();
+ctx.moveTo(f(Xd[13],X[13]),f(Yd[13],Y[13]));
+ctx.lineTo(f(Xd[13],X[13])+76,f(Yd[13],Y[13])+260);
+ctx.lineTo(f(Xd[13],X[13])+150,f(Yd[13],Y[13])+0);
+ctx.lineTo(f(Xd[13],X[13]),f(Yd[13],Y[13]));
+ctx.fill();
+ctx.closePath();
+ctx.stroke();
+
+
+//------ triangle 14
+ctx.fillStyle =  "rgba(255,133,70,1)";
+ctx.beginPath();
+ctx.moveTo(f(Xd[14],X[14]), f(Yd[14],Y[14]));
+ctx.lineTo(f(Xd[14],X[14])-51,f(Yd[14],Y[14])+376);
+ctx.lineTo(f(Xd[14],X[14])+75,f(Yd[14],Y[14])+18);
+ctx.lineTo(f(Xd[14],X[14]),f(Yd[14],Y[14]));
+ctx.fill();
+ctx.closePath();
+ctx.stroke();
+
+//------ triangle 15
+ctx.fillStyle = "rgba(255,255,102,1)";
+ctx.beginPath();
+ctx.moveTo(f(Xd[15],X[15]), f(Yd[15],Y[15]));
+ctx.lineTo(f(Xd[15],X[15])-137,f(Yd[15],Y[15])+260);
+ctx.lineTo(f(Xd[15],X[15])+43,f(Yd[15],Y[15])+33);
+ctx.lineTo(f(Xd[15],X[15]),f(Yd[15],Y[15]));
+ctx.fill();
+ctx.closePath();
+ctx.stroke();
+
+
+
+//--------------- cercles
+
+
+//--cercle 0
+
+ctx.beginPath();
+ctx.fillStyle = coulcercles;
+ctx.arc(f(Xd[0],X[0]), f(Yd[0],Y[0]), 38, 0, Math.PI*2, true); 
+ctx.closePath();
+ctx.fill();
+ctx.stroke();
+
+
+
+
+
+//--cercle 2
+
+ctx.beginPath();
+ctx.fillStyle = coulcercles;
+ctx.arc(f(Xd[2],X[2]), f(Yd[2],Y[2]), 32, 0, Math.PI*2, true); 
+ctx.closePath();
+ctx.fill();
+ctx.stroke();
+
+
+
+
+
+//--cercle 3
+
+ctx.beginPath();
+ctx.fillStyle = "rgba(255,255,255,0.3)";
+ctx.arc(f(Xd[3],X[3]), f(Yd[3],Y[3]), 63, 0, Math.PI*2, true); 
+ctx.closePath();
+ctx.fill();
+ctx.stroke();
+
+//--cercle 4
+
+ctx.beginPath();
+ctx.fillStyle = "rgba(255,255,102,1)";
+ctx.arc(f(Xd[4],X[4]), f(Yd[4],Y[4]), 28, 0, Math.PI*2, true); 
+ctx.closePath();
+ctx.fill();
+ctx.stroke();
+
+//--cercle 5
+
+ctx.beginPath();
+ctx.fillStyle = coulcercles;
+ctx.arc(f(Xd[5],X[5]), f(Yd[5],Y[5]), 38, 0, Math.PI*2, true); 
+ctx.closePath();
+ctx.fill();
+ctx.stroke();
+
+//--cercle 6
+
+ctx.beginPath();
+ctx.fillStyle = coulcercles;
+ctx.arc(f(Xd[6],X[6]), f(Yd[6],Y[6]), 41, 0, Math.PI*2, true); 
+ctx.closePath();
+ctx.fill();
+ctx.stroke();
+
+
+
+
+
+
+
+}
+
+function nettoyageB() {
+
+ctx.clearRect(0,0,600,600);
+}
+
+
+function cadre(){
+ctx.beginPath();
+ctx.moveTo(0,0);
+ctx.lineTo(0,600);
+ctx.lineTo(600,600);
+ctx.lineTo(600,0);
+ctx.lineTo(0,0);
+//ctx.shadowBlur = 10;
+//ctx.shadowColor = "black";
+ctx.closePath();
+ctx.lineWidth = 5;
+ctx.stroke();
+ctx.lineWidth = 0.5;
+}
+
+
+function nettoyage() {
+ctx.shadowBlur = 0;
+var ep=-10;
+ctx.clearRect(ep,ep,600-2*ep,600-2*ep);
+ctx.fillStyle = couleurfond;
+ctx.fillRect(ep,ep,600-2*ep,600-2*ep);
+cadre();
+}
+
+
+
+
+// variables pour le mouvement
+var t;
+var k;
+var lambda=0;
+
+
+
+
+function continu() {
+mvt();
+k=setInterval(mvt,tempspause);
+}
+
+
+function mvt() {
+decoupage_mvt();
+t=setInterval(decoupage_mvt,tempstrajet/nbpas);
+}
+
+
+function echange(){
+for (var i=0; i<NBfig; i++) { // les points d'arrivée deviennent les points de départ
+Xd[i]=X[i];
+Yd[i]=Y[i];
+			}
+}
+
+
+
+
+function mvtfin() { // mouvement final ramenant au tableau initial
+pointsdepart();
+//alert('ok');
+for (var i=0; i<NBfig; i++) { // routine échangeant les points de base
+Xt[i]=X[i];
+Yt[i]=Y[i];
+X[i]=Xd[i];
+Y[i]=Yd[i];
+Xd[i]=Xt[i];
+Yd[i]=Yt[i];
+			}
+lambda=0;
+
+mvt();
+}
+
+
+
+
+
+function decoupage_mvt() { // boucle demandant le dessin à chaque étape du découpage
+lambda=lambda+1;
+if (lambda==nbpas+1) {
+clearTimeout(t);
+lambda=0;
+echange();
+cadre();
+
+}
+else	{
+nettoyage();
+a=1-lambda/nbpas; // affichage selon coordonnées barycentriques 
+b=lambda/nbpas;
+dessine();
+	}
+}
+
+function tableau_initial() {
+clearTimeout(t);
+clearTimeout(k);
+nettoyage();
+a=1;
+b=0;
+randomize(); // uniquement pour qu'existent les Xd[i]
+pointsdepart();
+dessine();
+}
+
+
+tableau_initial();
+
+</script>
+
+
+<div style="text-align:center;">
+
+<!---  <INPUT type="button" value="Continu" onClick="javascript:continu()"-->
+<input value="Configuration suivante" onclick="javascript:randomize();mvt()" type="button">
+     
+
+<!---  <INPUT type="button" value="Stop" onClick="javascript:clearTimeout(k)"-->
+<input value="Configuration de départ" onclick="javascript:mvtfin()" type="button">
+</div>
+  
+
+</body></html>
